@@ -71,12 +71,8 @@ module RRRSpec
           formatter = RedisReportingFormatter
           trial.start
           $0 = "rrrspec slave[#{ENV['SLAVE_NUMBER']}]: running #{task.spec_file}"
-          status, outbuf, errbuf = ExtremeTimeout::timeout(
-            hard_timeout_sec, TIMEOUT_EXITCODE
-          ) do
-            Timeout::timeout(soft_timeout_sec, SoftTimeoutException) do
-              @rspec_runner.run(formatter)
-            end
+          status, outbuf, errbuf = Timeout::timeout(soft_timeout_sec, SoftTimeoutException) do
+            @rspec_runner.run(formatter)
           end
           if status
             trial.finish(formatter.status, outbuf, errbuf,
